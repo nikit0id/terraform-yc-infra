@@ -1,0 +1,7 @@
+.terraform/
+*.tfstate*
+*.tfplan
+*.tfvars
+backend.hcl
+inventory.local.yml
+.env
