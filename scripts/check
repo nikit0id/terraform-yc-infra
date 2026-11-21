@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+terraform fmt -check -recursive
+for dir in environments/staging environments/production; do
+    terraform -chdir="$dir" init -backend=false -input=false
+    terraform -chdir="$dir" validate
+    terraform -chdir="$dir" test
+done
+tflint --recursive --config="$PWD/.tflint.hcl"
