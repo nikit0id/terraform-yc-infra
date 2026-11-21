@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+"""Emit Ansible inventory as JSON (also valid YAML) from Terraform output."""
+import argparse
+import ipaddress
+import json
+import subprocess
+
+parser = argparse.ArgumentParser()
+parser.add_argument("environment", choices=["staging", "production"])
+args = parser.parse_args()
+output = subprocess.check_output(
+    ["terraform", f"-chdir=environments/{args.environment}", "output", "-raw", "ansible_host"],
+    text=True,
+)
+host = {"ansible_host": str(ipaddress.ip_address(output.strip())), "ansible_user": "ubuntu"}
+print(json.dumps({"baseline": {"hosts": {args.environment: host}}}, indent=2))
